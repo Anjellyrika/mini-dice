@@ -1,36 +1,67 @@
-use std::io;
-use rand::{Rng, thread_rng};
+// use std::io;
+use eframe::run_native;
+use mini_dice_roller::State;
 
-fn main() {
-    println!("Die sizes: [d4] [d6] [d8] [d10] [d12] [d20]");
-    println!("Input the die size:");
-    let mut input = String::new();
-    io::stdin().read_line(&mut input).unwrap();
+#[derive(Default)]
+struct DiceRoller {
+    die_size: Option<u32>,
+}
 
-    let die_size: u32 = input.trim().parse().unwrap();
-    println!("Rolling a d{}", die_size);
+impl eframe::App for DiceRoller {
+    fn update(&mut self, ctx: &egui::Context, _: &mut eframe::Frame) {
+        egui::CentralPanel::default().show(ctx, |ui| {
+            ui.label("Welcome to Jelly's Mini Dice Roller");
 
-    let mut rng = thread_rng();
-    let result: u32 = rng.gen_range(1..=die_size);
+            let d4 = ui.button("D4");
+            let d6 = ui.button("D6");
+            let d8 = ui.button("D8");
+            let d10 = ui.button("D10");
+            let d12 = ui.button("D12");
+            let d20 = ui.button("D20");
 
-    if die_size == 20 {
-        match result {
-            1 => println!("You got a Nat 1..."),
-            20  => println!("You got a Nat 20!"),       
-            8 => println!("You got an 8."),
-            11 => println!("You got an 11."),
-            18 => println!("You got an 18."),
-            _ => println!("You got a {}.", result),
-        };
-    }
+            let maybe_reset = if let Some(die_size) = self.die_size {
+                // FIXME: Potential performance bottleneck due to frequent `malloc` + `free`!
+                // => Cache the output in the DiceRoller struct
+                ui.label(format!("Rolling d{die_size}..."));
+                Some(ui.button("Reset"))
+            } else {
+                None
+            };
 
-    else {
-        match result {
-           8 => println!("You got an 8."),
-           11 => println!("You got an 11."),
-           18 => println!("You got an 18."),
-           _ => println!("You got a {}.", result),
-        };
+            self.die_size = if d4.clicked() {
+                Some(4)
+            } else if d6.clicked() {
+                Some(6)
+            } else if d8.clicked() {
+                Some(8)
+            } else if d10.clicked() {
+                Some(10)
+            } else if d12.clicked() {
+                Some(12)
+            } else if d20.clicked() {
+                Some(20)
+            } else if maybe_reset.as_ref().map(egui::Response::clicked).unwrap_or_default() {
+                None
+            } else {
+                return;
+            };
+        });
     }
 }
 
+fn main() -> eframe::Result<()> {
+    run_native(
+        "Mini Dice Roller",
+        eframe::NativeOptions::default(),
+        Box::new(|_| Box::<DiceRoller>::default()),
+    )
+
+    // println!("Die sizes: [d4] [d6] [d8] [d10] [d12] [d20]");
+    // println!("Input the die size:");
+    // let mut input = String::new();
+    // io::stdin().read_line(&mut input).unwrap();
+
+    // let die_size: u32 = input.trim().parse().unwrap();
+
+    // roller(die_size);
+}
