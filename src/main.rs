@@ -2,9 +2,9 @@
 use eframe::run_native;
 use mini_dice_roller::State;
 
+#[derive(Default)]
 struct DiceRoller {
-    current_state: State,
-    die_size: u32,
+    die_size: Option<u32>,
 }
 
 impl eframe::App for DiceRoller {
@@ -19,30 +19,32 @@ impl eframe::App for DiceRoller {
             let d12 = ui.button("D12");
             let d20 = ui.button("D20");
 
-            match self.current_state {
-                State::Selection => {
-                    self.die_size = if d4.clicked() {
-                        4
-                    } else if d6.clicked() {
-                        6
-                    } else if d8.clicked() {
-                        8
-                    } else if d10.clicked() {
-                        10
-                    } else if d12.clicked() {
-                        12
-                    } else if d20.clicked() {
-                        20
-                    } else {
-                        self.die_size
-                    };
+            let maybe_reset = if let Some(die_size) = self.die_size {
+                // FIXME: Potential performance bottleneck due to frequent `malloc` + `free`!
+                // => Cache the output in the DiceRoller struct
+                ui.label(format!("Rolling d{die_size}..."));
+                Some(ui.button("Reset"))
+            } else {
+                None
+            };
 
-                    ui.label(self.die_size.to_string());
-                }
-                State::Result => {
-                    todo!()
-                }
-            }
+            self.die_size = if d4.clicked() {
+                Some(4)
+            } else if d6.clicked() {
+                Some(6)
+            } else if d8.clicked() {
+                Some(8)
+            } else if d10.clicked() {
+                Some(10)
+            } else if d12.clicked() {
+                Some(12)
+            } else if d20.clicked() {
+                Some(20)
+            } else if maybe_reset.as_ref().map(egui::Response::clicked).unwrap_or_default() {
+                None
+            } else {
+                return;
+            };
         });
     }
 }
@@ -64,13 +66,12 @@ fn main() {
     )
     .unwrap();
 
-    println!("Die sizes: [d4] [d6] [d8] [d10] [d12] [d20]");
+    // println!("Die sizes: [d4] [d6] [d8] [d10] [d12] [d20]");
     // println!("Input the die size:");
     // let mut input = String::new();
     // io::stdin().read_line(&mut input).unwrap();
 
     // let die_size: u32 = input.trim().parse().unwrap();
-    // println!("Rolling a d{}", die_size);
 
     // roller(die_size);
 }
