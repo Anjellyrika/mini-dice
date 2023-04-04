@@ -1,11 +1,10 @@
 pub enum State {
-    Initial,
-    Selection { die_size: u32 },
+    Selection,
     Result
 }
 
 impl Default for State {
     fn default() -> Self {
-        Self::Initial
+        Self::Selection
     }
 }
