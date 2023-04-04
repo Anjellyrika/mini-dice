@@ -49,22 +49,12 @@ impl eframe::App for DiceRoller {
     }
 }
 
-impl DiceRoller {
-    fn new() -> DiceRoller {
-        DiceRoller {
-            current_state: State::default(),
-            die_size: 20,
-        }
-    }
-}
-
-fn main() {
+fn main() -> eframe::Result<()> {
     run_native(
         "Mini Dice Roller",
         eframe::NativeOptions::default(),
-        Box::new(|_cc| Box::new(DiceRoller::new())),
+        Box::new(|_| Box::<DiceRoller>::default()),
     )
-    .unwrap();
 
     // println!("Die sizes: [d4] [d6] [d8] [d10] [d12] [d20]");
     // println!("Input the die size:");
