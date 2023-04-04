@@ -1,6 +1,6 @@
 pub enum State {
     Selection,
-    Result
+    Result,
 }
 
 impl Default for State {

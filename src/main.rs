@@ -1,7 +1,6 @@
 // use std::io;
 use eframe::run_native;
-use egui::Button;
-use mini_dice_roller::{/*roller,*/ State};
+use mini_dice_roller::State;
 
 struct DiceRoller {
     current_state: State,
@@ -9,17 +8,40 @@ struct DiceRoller {
 }
 
 impl eframe::App for DiceRoller {
-    fn update(&mut self, ctx: &egui::Context, frame: &mut eframe::Frame) {
+    fn update(&mut self, ctx: &egui::Context, _: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
             ui.label("Welcome to Jelly's Mini Dice Roller");
 
+            let d4 = ui.button("D4");
+            let d6 = ui.button("D6");
+            let d8 = ui.button("D8");
+            let d10 = ui.button("D10");
+            let d12 = ui.button("D12");
+            let d20 = ui.button("D20");
+
             match self.current_state {
                 State::Selection => {
-                    
-                },
+                    self.die_size = if d4.clicked() {
+                        4
+                    } else if d6.clicked() {
+                        6
+                    } else if d8.clicked() {
+                        8
+                    } else if d10.clicked() {
+                        10
+                    } else if d12.clicked() {
+                        12
+                    } else if d20.clicked() {
+                        20
+                    } else {
+                        self.die_size
+                    };
+
+                    ui.label(self.die_size.to_string());
+                }
                 State::Result => {
                     todo!()
-                },
+                }
             }
         });
     }
@@ -34,13 +56,13 @@ impl DiceRoller {
     }
 }
 
-
 fn main() {
     run_native(
         "Mini Dice Roller",
         eframe::NativeOptions::default(),
         Box::new(|_cc| Box::new(DiceRoller::new())),
-    ).unwrap();
+    )
+    .unwrap();
 
     println!("Die sizes: [d4] [d6] [d8] [d10] [d12] [d20]");
     // println!("Input the die size:");

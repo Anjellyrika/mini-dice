@@ -1,6 +1,6 @@
 mod state;
-pub use state::State;
 use rand::{thread_rng, Rng};
+pub use state::State;
 
 pub fn roller(die_size: u32) {
     let mut rng = thread_rng();
