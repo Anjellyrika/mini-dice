@@ -1,7 +1,26 @@
 use std::io;
-use rand::{Rng, thread_rng};
+use eframe::run_native;
+use mini_dice_roller::{roller, State};
+
+struct DiceRoller {
+    current_state: State,
+}
+
+impl DiceRoller {
+    fn new() -> DiceRoller {
+        DiceRoller {
+            current_state: State::default()
+        }
+    }
+}
 
 fn main() {
+    run_native(
+        "Mini Dice Roller",
+        eframe::NativeOptions::default(),
+        Box::new(|_cc| Box::new()),
+    )
+
     println!("Die sizes: [d4] [d6] [d8] [d10] [d12] [d20]");
     println!("Input the die size:");
     let mut input = String::new();
