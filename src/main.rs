@@ -26,15 +26,14 @@ impl eframe::App for DiceRoller {
                 // FIXME: Potential performance bottleneck due to frequent `malloc` + `free`!
                 // => Cache the output in the DiceRoller struct
                 ui.label(format!("Rolling d{die_size}..."));
+                ui.label(format!("Result: {}", self.die_result.unwrap_or_default()));
                 
                 match self.current_state {
                     State::Selection => {
                         self.die_result = Some(roller(die_size));  
                         self.current_state = State::Result;
-                        return;
                     },
                     State::Result => {
-                        ui.label(format!("Result: {}", self.die_result.unwrap()));
                     },
                 }
                 Some(ui.button("Reset"))
