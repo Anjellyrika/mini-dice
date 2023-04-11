@@ -1,10 +1,12 @@
 // use std::io;
 use eframe::run_native;
-use mini_dice_roller::State;
+use mini_dice_roller::{State, roller};
 
 #[derive(Default)]
 struct DiceRoller {
+    current_state: State,
     die_size: Option<u32>,
+    die_result: Option<u32>
 }
 
 impl eframe::App for DiceRoller {
@@ -23,24 +25,42 @@ impl eframe::App for DiceRoller {
                 // FIXME: Potential performance bottleneck due to frequent `malloc` + `free`!
                 // => Cache the output in the DiceRoller struct
                 ui.label(format!("Rolling d{die_size}..."));
+                
+                match self.current_state {
+                    State::Selection => {
+                        roller(die_size);  
+                        self.current_state = State::Result;
+                    },
+                    State::Result => {
+                        println!("currently in Result mode");
+                    },
+                }
                 Some(ui.button("Reset"))
+
             } else {
                 None
             };
 
             self.die_size = if d4.clicked() {
+                self.current_state = State::Selection;
                 Some(4)
             } else if d6.clicked() {
+                self.current_state = State::Selection;
                 Some(6)
             } else if d8.clicked() {
+                self.current_state = State::Selection;
                 Some(8)
             } else if d10.clicked() {
+                self.current_state = State::Selection;
                 Some(10)
             } else if d12.clicked() {
+                self.current_state = State::Selection;
                 Some(12)
             } else if d20.clicked() {
+                self.current_state = State::Selection;
                 Some(20)
             } else if maybe_reset.as_ref().map(egui::Response::clicked).unwrap_or_default() {
+                self.current_state = State::Selection;
                 None
             } else {
                 return;
