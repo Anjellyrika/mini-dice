@@ -1,6 +1,6 @@
 // use std::io;
 use eframe::run_native;
-use mini_dice_roller::{State, roller};
+use mini_dice_roller::{State, roller, message};
 
 #[derive(Default)]
 struct DiceRoller {
@@ -26,11 +26,11 @@ impl eframe::App for DiceRoller {
                 // FIXME: Potential performance bottleneck due to frequent `malloc` + `free`!
                 // => Cache the output in the DiceRoller struct
                 ui.label(format!("Rolling d{die_size}..."));
-                ui.label(format!("Result: {}", self.die_result.unwrap_or_default()));
+                ui.label(message(self.die_size.unwrap_or_default(), self.die_result.unwrap_or_default()));
                 
                 match self.current_state {
                     State::Selection => {
-                        self.die_result = Some(roller(die_size));  
+                        self.die_result = Some(roller(die_size));
                         self.current_state = State::Result;
                     },
                     State::Result => {
@@ -80,13 +80,4 @@ fn main() -> eframe::Result<()> {
         eframe::NativeOptions::default(),
         Box::new(|_| Box::<DiceRoller>::default()),
     )
-
-    // println!("Die sizes: [d4] [d6] [d8] [d10] [d12] [d20]");
-    // println!("Input the die size:");
-    // let mut input = String::new();
-    // io::stdin().read_line(&mut input).unwrap();
-
-    // let die_size: u32 = input.trim().parse().unwrap();
-
-    // roller(die_size);
 }
