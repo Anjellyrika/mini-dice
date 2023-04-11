@@ -29,11 +29,12 @@ impl eframe::App for DiceRoller {
                 
                 match self.current_state {
                     State::Selection => {
-                        roller(die_size);  
+                        self.die_result = Some(roller(die_size));  
                         self.current_state = State::Result;
+                        return;
                     },
                     State::Result => {
-                        println!("currently in Result mode");
+                        ui.label(format!("Result: {}", self.die_result.unwrap()));
                     },
                 }
                 Some(ui.button("Reset"))
@@ -63,7 +64,8 @@ impl eframe::App for DiceRoller {
             } else if d100.clicked() {
                 self.current_state = State::Selection;
                 Some(100)
-            } else if maybe_reset.as_ref().map(egui::Response::clicked).unwrap_or_default() {
+            }
+             else if maybe_reset.as_ref().map(egui::Response::clicked).unwrap_or_default() {
                 self.current_state = State::Selection;
                 None
             } else {
