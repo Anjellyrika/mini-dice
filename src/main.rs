@@ -20,6 +20,7 @@ impl eframe::App for DiceRoller {
             let d10 = ui.button("D10");
             let d12 = ui.button("D12");
             let d20 = ui.button("D20");
+            let d100 = ui.button("D100");
 
             let maybe_reset = if let Some(die_size) = self.die_size {
                 // FIXME: Potential performance bottleneck due to frequent `malloc` + `free`!
@@ -59,6 +60,9 @@ impl eframe::App for DiceRoller {
             } else if d20.clicked() {
                 self.current_state = State::Selection;
                 Some(20)
+            } else if d100.clicked() {
+                self.current_state = State::Selection;
+                Some(100)
             } else if maybe_reset.as_ref().map(egui::Response::clicked).unwrap_or_default() {
                 self.current_state = State::Selection;
                 None
