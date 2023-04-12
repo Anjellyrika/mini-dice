@@ -1,12 +1,16 @@
-// use std::io;
+use derivative::Derivative;
 use eframe::run_native;
+use egui::Slider;
 use mini_dice_roller::{enum_to_int, message, roller, Dice, State};
 
-#[derive(Default)]
+#[derive(Derivative)]
+#[derivative(Default)]
 struct DiceRoller {
     current_state: State,
     dice_enum: Dice,
     die_size: Option<u32>,
+    #[derivative(Default(value="1"))]
+    die_amount: u32,
     die_result: Option<u32>,
 
     // Text display
