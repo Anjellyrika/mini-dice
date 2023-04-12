@@ -97,7 +97,7 @@ impl eframe::App for DiceRoller {
                         }
 
                         self.die_result = Some(total);
-                        self.result_msg = message(self.die_size.unwrap(), self.die_result.unwrap());
+                        self.result_msg = message(self.die_amount, self.die_size.unwrap(), self.die_result.unwrap());
                         self.current_state = State::Result;
                     };
 
