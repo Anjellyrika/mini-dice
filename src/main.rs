@@ -17,9 +17,15 @@ struct DiceRoller {
 impl eframe::App for DiceRoller {
     fn update(&mut self, ctx: &egui::Context, _: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
-            ui.heading("Welcome to Jelly's Mini Dice Roller");
+            ui.horizontal(|ui| {
+                ui.heading("Welcome to Jelly's Mini Dice Roller");
+                egui::widgets::global_dark_light_mode_switch(ui);
+            });
+            ui.end_row();
+            ui.separator();
 
             let dice_selection = ui.horizontal(|ui| {
+                ui.label("🎲 Select a die:");
                 if ui
                     .selectable_value(&mut self.dice_enum, Dice::D20, "D20")
                     .clicked()
@@ -70,6 +76,8 @@ impl eframe::App for DiceRoller {
                 self.die_size = Some(dice_selection.inner);
             }
 
+            ui.add_space(8.0);
+
             let is_reset = self
                 .die_size
                 .map(|die_size| {
@@ -81,7 +89,7 @@ impl eframe::App for DiceRoller {
                         self.result_msg = message(self.die_size.unwrap(), self.die_result.unwrap());
                         self.current_state = State::Result;
                     }
-                    ui.button("Reset").clicked()
+                    ui.button("↻ Reset").clicked()
                 })
                 .unwrap_or_default();
 
@@ -89,7 +97,6 @@ impl eframe::App for DiceRoller {
                 self.current_state = State::Reset;
                 self.die_size = None;
             }
-            egui::widgets::global_dark_light_mode_switch(ui);
         });
     }
 }
