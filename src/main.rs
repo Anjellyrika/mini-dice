@@ -9,7 +9,7 @@ struct DiceRoller {
     current_state: State,
     dice_enum: Dice,
     die_size: Option<u32>,
-    #[derivative(Default(value="1"))]
+    #[derivative(Default(value = "1"))]
     die_amount: u32,
     die_result: Option<u32>,
 
@@ -85,13 +85,25 @@ impl eframe::App for DiceRoller {
             let is_reset = self
                 .die_size
                 .map(|die_size| {
-                    ui.label(&self.rolling_msg);
-                    ui.label(&self.result_msg);
-                    if matches!(self.current_state, State::Selection) {
-                        self.rolling_msg = format!("Rolling d{die_size}...");
-                        self.die_result = Some(roller(die_size));
+                    ui.add(Slider::new(&mut self.die_amount, 1..=20).text("Amount to roll"));
+
+                    if ui.button("Roll!").clicked() {
+                        self.rolling_msg = format!("Rolling {}d{die_size}...", self.die_amount);
+
+                        let mut total: u32 = 0;
+                        for _ in 1..=self.die_amount {
+                            let indiv_roll = roller(die_size);
+                            total += indiv_roll;
+                        }
+
+                        self.die_result = Some(total);
                         self.result_msg = message(self.die_size.unwrap(), self.die_result.unwrap());
                         self.current_state = State::Result;
+                    };
+
+                    if matches!(self.current_state, State::Result) {
+                        ui.label(&self.rolling_msg);
+                        ui.label(&self.result_msg);
                     }
                     ui.button("↻ Reset").clicked()
                 })
