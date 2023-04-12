@@ -17,15 +17,58 @@ struct DiceRoller {
 impl eframe::App for DiceRoller {
     fn update(&mut self, ctx: &egui::Context, _: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
-            ui.label("Welcome to Jelly's Mini Dice Roller");
+            ui.heading("Welcome to Jelly's Mini Dice Roller");
 
-            let d4 = ui.button("D4");
-            let d6 = ui.button("D6");
-            let d8 = ui.button("D8");
-            let d10 = ui.button("D10");
-            let d12 = ui.button("D12");
-            let d20 = ui.button("D20");
-            let d100 = ui.button("D100");
+            let dice_selection = ui.horizontal(|ui| {
+                if ui
+                    .selectable_value(&mut self.dice_enum, Dice::D20, "D20")
+                    .clicked()
+                {
+                    self.current_state = State::Selection;
+                };
+                if ui
+                    .selectable_value(&mut self.dice_enum, Dice::D12, "D12")
+                    .clicked()
+                {
+                    self.current_state = State::Selection;
+                };
+                if ui
+                    .selectable_value(&mut self.dice_enum, Dice::D10, "D10")
+                    .clicked()
+                {
+                    self.current_state = State::Selection;
+                };
+                if ui
+                    .selectable_value(&mut self.dice_enum, Dice::D8, "D8")
+                    .clicked()
+                {
+                    self.current_state = State::Selection;
+                };
+                if ui
+                    .selectable_value(&mut self.dice_enum, Dice::D6, "D6")
+                    .clicked()
+                {
+                    self.current_state = State::Selection;
+                };
+                if ui
+                    .selectable_value(&mut self.dice_enum, Dice::D4, "D4")
+                    .clicked()
+                {
+                    self.current_state = State::Selection;
+                };
+                if ui
+                    .selectable_value(&mut self.dice_enum, Dice::D100, "D100")
+                    .clicked()
+                {
+                    self.current_state = State::Selection;
+                };
+                enum_to_int(&self.dice_enum)
+            });
+            ui.end_row();
+
+            if matches!(self.current_state, State::Selection) {
+                self.die_size = Some(dice_selection.inner);
+            }
 
             let is_reset = self
                 .die_size
@@ -42,33 +85,11 @@ impl eframe::App for DiceRoller {
                 })
                 .unwrap_or_default();
 
-            self.die_size = if d4.clicked() {
-                self.current_state = State::Selection;
-                Some(4)
-            } else if d6.clicked() {
-                self.current_state = State::Selection;
-                Some(6)
-            } else if d8.clicked() {
-                self.current_state = State::Selection;
-                Some(8)
-            } else if d10.clicked() {
-                self.current_state = State::Selection;
-                Some(10)
-            } else if d12.clicked() {
-                self.current_state = State::Selection;
-                Some(12)
-            } else if d20.clicked() {
-                self.current_state = State::Selection;
-                Some(20)
-            } else if d100.clicked() {
-                self.current_state = State::Selection;
-                Some(100)
-            } else if is_reset {
-                self.current_state = State::Selection;
-                None
-            } else {
-                return;
-            };
+            if is_reset {
+                self.current_state = State::Reset;
+                self.die_size = None;
+            }
+            egui::widgets::global_dark_light_mode_switch(ui);
         });
     }
 }
