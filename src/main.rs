@@ -1,10 +1,11 @@
 // use std::io;
 use eframe::run_native;
-use mini_dice_roller::{message, roller, State};
+use mini_dice_roller::{enum_to_int, message, roller, Dice, State};
 
 #[derive(Default)]
 struct DiceRoller {
     current_state: State,
+    dice_enum: Dice,
     die_size: Option<u32>,
     die_result: Option<u32>,
 
