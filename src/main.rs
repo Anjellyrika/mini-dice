@@ -15,6 +15,7 @@ struct DiceRoller {
 
     // Text display
     rolling_msg: String,
+    individual_results: String,
     result_msg: String,
 }
 
@@ -78,6 +79,7 @@ impl eframe::App for DiceRoller {
 
             if matches!(self.current_state, State::Selection) {
                 self.die_size = Some(dice_selection.inner);
+                self.individual_results.clear();
             }
 
             ui.add_space(8.0);
@@ -85,25 +87,45 @@ impl eframe::App for DiceRoller {
             let is_reset = self
                 .die_size
                 .map(|die_size| {
-                    ui.add(Slider::new(&mut self.die_amount, 1..=20).text("Amount to roll"));
+                    if ui
+                        .add(Slider::new(&mut self.die_amount, 1..=20).text("Amount to roll"))
+                        .changed()
+                    {
+                        self.current_state = State::Selection;
+                    };
 
                     if ui.button("Roll!").clicked() {
                         self.rolling_msg = format!("Rolling {}d{die_size}...", self.die_amount);
 
                         let mut total: u32 = 0;
-                        for _ in 1..=self.die_amount {
+                        for i in 1..=self.die_amount {
                             let indiv_roll = roller(die_size);
                             total += indiv_roll;
+
+                            self.individual_results
+                                .push_str(&format!("{}", indiv_roll.to_string()));
+                            if self.die_amount == 1 || i == self.die_amount {
+                                break;
+                            }
+                            self.individual_results.push_str(&format!(" + "));
                         }
 
                         self.die_result = Some(total);
-                        self.result_msg = message(self.die_amount, self.die_size.unwrap(), self.die_result.unwrap());
+                        self.result_msg = message(
+                            self.die_amount,
+                            self.die_size.unwrap(),
+                            self.die_result.unwrap(),
+                        );
                         self.current_state = State::Result;
                     };
 
                     if matches!(self.current_state, State::Result) {
                         ui.label(&self.rolling_msg);
                         ui.label(&self.result_msg);
+                        // Display each die result for multiple rolls
+                        if self.die_amount > 1 {
+                            ui.label(&self.individual_results);
+                        }
                     }
                     ui.button("↻ Reset").clicked()
                 })
