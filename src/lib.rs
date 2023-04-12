@@ -12,7 +12,7 @@ pub fn message(die_size: u32, die_result: u32) -> String {
         (_, 8) => String::from("You got an 8."),
         (_, 11) => String::from("You got an 11."),
         (_, 18) => String::from("You got an 18."),
-        (100, eighties @ 80..=89) => format!("You got an {eighties}"),
+        (100, eighties @ 80..=89) => format!("You got an {eighties}."),
         _ => format!("You got a {die_result}."),
     }
 }

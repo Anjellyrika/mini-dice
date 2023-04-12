@@ -73,9 +73,21 @@ impl eframe::App for DiceRoller {
 }
 
 fn main() -> eframe::Result<()> {
+    let options = eframe::NativeOptions {
+        min_window_size: Some(egui::Vec2 {
+            x: (500.0),
+            y: (480.0),
+        }),
+        initial_window_size: Some(egui::Vec2 {
+            x: (500.0),
+            y: (480.0),
+        }),
+        ..Default::default()
+    };
+
     run_native(
         "Mini Dice Roller",
-        eframe::NativeOptions::default(),
+        options,
         Box::new(|_| Box::<DiceRoller>::default()),
     )
 }
