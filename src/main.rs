@@ -1,6 +1,6 @@
 use derivative::Derivative;
 use eframe::run_native;
-use egui::Slider;
+use egui::{Button, Slider, Color32};
 use mini_dice_roller::{enum_to_int, message, roller, Dice, State};
 
 #[derive(Derivative)]
@@ -79,7 +79,6 @@ impl eframe::App for DiceRoller {
 
             if matches!(self.current_state, State::Selection) {
                 self.die_size = Some(dice_selection.inner);
-                self.individual_results.clear();
             }
 
             ui.add_space(8.0);
@@ -94,7 +93,18 @@ impl eframe::App for DiceRoller {
                         self.current_state = State::Selection;
                     };
 
-                    if ui.button("Roll!").clicked() {
+                    let btn_color_mode = if ui.visuals().dark_mode {
+                        Color32::from_rgba_premultiplied(111, 42, 135, 255)
+                    } else {
+                        Color32::from_rgba_premultiplied(210, 153, 230, 255)
+                    };
+                    let roll_button = ui.add(
+                        Button::new("🎲 Roll!")
+                        .fill(btn_color_mode)
+                    );
+
+                    if roll_button.clicked() {
+                        self.individual_results.clear();
                         self.rolling_msg = format!("Rolling {}d{die_size}...", self.die_amount);
 
                         let mut total: u32 = 0;
