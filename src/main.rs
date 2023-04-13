@@ -144,6 +144,7 @@ impl eframe::App for DiceRoller {
             if is_reset {
                 self.current_state = State::Reset;
                 self.die_size = None;
+                self.die_amount = 1;
             }
         });
     }
