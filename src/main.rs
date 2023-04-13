@@ -31,48 +31,19 @@ impl eframe::App for DiceRoller {
 
             let dice_selection = ui.horizontal(|ui| {
                 ui.label("🎲 Select a die:");
-                if ui
-                    .selectable_value(&mut self.dice_enum, Dice::D20, "D20")
-                    .clicked()
-                {
+                
+                let d20 = ui.selectable_value(&mut self.dice_enum, Dice::D20, "D20");
+                let d12 = ui.selectable_value(&mut self.dice_enum, Dice::D12, "D12");
+                let d10 = ui.selectable_value(&mut self.dice_enum, Dice::D10, "D10");
+                let d8 = ui.selectable_value(&mut self.dice_enum, Dice::D8, "D8");
+                let d6 = ui.selectable_value(&mut self.dice_enum, Dice::D6, "D6");
+                let d4 = ui.selectable_value(&mut self.dice_enum, Dice::D4, "D4");
+                let d100 = ui.selectable_value(&mut self.dice_enum, Dice::D100, "D100");                
+
+                if d20.clicked() || d12.clicked() || d10.clicked() || d8.clicked() || d6.clicked() || d4.clicked() || d100.clicked() {
                     self.current_state = State::Selection;
                 };
-                if ui
-                    .selectable_value(&mut self.dice_enum, Dice::D12, "D12")
-                    .clicked()
-                {
-                    self.current_state = State::Selection;
-                };
-                if ui
-                    .selectable_value(&mut self.dice_enum, Dice::D10, "D10")
-                    .clicked()
-                {
-                    self.current_state = State::Selection;
-                };
-                if ui
-                    .selectable_value(&mut self.dice_enum, Dice::D8, "D8")
-                    .clicked()
-                {
-                    self.current_state = State::Selection;
-                };
-                if ui
-                    .selectable_value(&mut self.dice_enum, Dice::D6, "D6")
-                    .clicked()
-                {
-                    self.current_state = State::Selection;
-                };
-                if ui
-                    .selectable_value(&mut self.dice_enum, Dice::D4, "D4")
-                    .clicked()
-                {
-                    self.current_state = State::Selection;
-                };
-                if ui
-                    .selectable_value(&mut self.dice_enum, Dice::D100, "D100")
-                    .clicked()
-                {
-                    self.current_state = State::Selection;
-                };
+
                 enum_to_int(&self.dice_enum)
             });
             ui.end_row();
